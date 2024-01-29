@@ -9,7 +9,20 @@ defmodule CodeHygiene.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+        # "coveralls.json": :test,
+        # "coveralls.xml": :test,
+        # "coveralls.send": :test,
+        # "coveralls.html_detail": :test,
+        # "coveralls.json_detail": :test,
+        # "coveralls.xml_detail": :test
+      ]
     ]
   end
 
@@ -50,7 +63,13 @@ defmodule CodeHygiene.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.18", only: [:dev, :test], runtime: false},
+      {:git_hooks, "~> 0.7.3", only: [:test, :dev], runtime: false},
+      {:boundary, "~> 0.10.1", runtime: false},
+      {:dialyxir, "~> 1.4.3", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.31.1", only: :dev, runtime: false}
     ]
   end
 
@@ -68,7 +87,8 @@ defmodule CodeHygiene.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],
-      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
+      check: ["format", "credo --strict", "compile --warnings-as-errors", "dialyzer", "docs"]
     ]
   end
 end
